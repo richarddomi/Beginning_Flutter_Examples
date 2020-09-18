@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'about.dart';
+import 'gratitude.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -8,7 +9,19 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  List<String> _gratitudeList = List();
+  String _selectedGratitude;
+  int _radioGroupValue;
+
   String _howAreYou = "...";
+
+  void _radioOnChanged(int index) {
+    setState(() {
+      _radioGroupValue = index;
+      _selectedGratitude = _gratitudeList [index];
+      print('_selectedRadioValue $_selectedGratitude');
+    });
+  }
 
   void _openPageAbout({BuildContext context, bool fullscreenDialog = false}) {
     Navigator.push(
@@ -20,6 +33,22 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _openPageGratitude(
+      {BuildContext context, bool fullscreenDialog = false}) async {
+    final String _gratitudeResponse = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        fullscreenDialog: fullscreenDialog,
+        builder: (context) =>
+            Gratitude(
+              radioGroupValue: -1,
+            ),
+      ),
+    );
+    _howAreYou = _gratitudeResponse ?? '';
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,15 +57,16 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.info_outline),
-            onPressed: () => _openPageAbout(
-              context: context,
-              fullscreenDialog: true,
-            ),
+            onPressed: () =>
+                _openPageAbout(
+                  context: context,
+                  fullscreenDialog: true,
+                ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        // onPressed: () => _openPageGratitude(context: context),
+        onPressed: () => _openPageGratitude(context: context),
         tooltip: 'About',
         child: Icon(Icons.sentiment_satisfied),
       ),
